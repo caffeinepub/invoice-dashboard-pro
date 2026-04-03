@@ -1,0 +1,228 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "GeneralSans";
+  src: url("/assets/fonts/GeneralSans-Variable.woff2") format("woff2");
+  font-weight: 200 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PlusJakartaSans";
+  src: url("/assets/fonts/PlusJakartaSans-Variable.woff2") format("woff2");
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+    /* Invoice Pro Light Theme */
+    --background: 0.975 0.003 248;
+    --foreground: 0.17 0.016 248;
+    --card: 1 0 0;
+    --card-foreground: 0.17 0.016 248;
+    --popover: 1 0 0;
+    --popover-foreground: 0.17 0.016 248;
+    --primary: 0.47 0.19 252;
+    --primary-foreground: 0.99 0 0;
+    --secondary: 0.94 0.008 248;
+    --secondary-foreground: 0.17 0.016 248;
+    --muted: 0.94 0.008 248;
+    --muted-foreground: 0.52 0.016 248;
+    --accent: 0.94 0.01 248;
+    --accent-foreground: 0.17 0.016 248;
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+    --border: 0.88 0.012 248;
+    --input: 0.88 0.012 248;
+    --ring: 0.47 0.19 252;
+    --chart-1: 0.47 0.19 252;
+    --chart-2: 0.6 0.15 178;
+    --chart-3: 0.55 0.22 32;
+    --chart-4: 0.65 0.18 142;
+    --chart-5: 0.55 0.25 302;
+    --sidebar: 0.13 0.018 248;
+    --sidebar-foreground: 0.93 0.01 248;
+    --sidebar-primary: 0.47 0.19 252;
+    --sidebar-primary-foreground: 0.99 0 0;
+    --sidebar-accent: 0.19 0.018 248;
+    --sidebar-accent-foreground: 0.93 0.01 248;
+    --sidebar-border: 0.22 0.016 248;
+    --sidebar-ring: 0.47 0.19 252;
+
+    /* Custom tokens */
+    --navy: oklch(0.13 0.018 248);
+    --navy-mid: oklch(0.19 0.018 248);
+    --navy-light: oklch(0.24 0.016 248);
+    --blue-accent: oklch(0.47 0.19 252);
+    --blue-light: oklch(0.92 0.04 252);
+    --success: oklch(0.55 0.18 145);
+    --warning: oklch(0.72 0.18 68);
+    --table-stripe: oklch(0.975 0.003 248);
+    --table-header: oklch(0.13 0.018 248);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "GeneralSans", "Inter", system-ui, sans-serif;
+    overflow: auto;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: oklch(0.94 0.008 248);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.78 0.016 248);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.62 0.018 248);
+  }
+}
+
+/* Editable cell styles */
+.cell-editable {
+  outline: none;
+  min-width: 1px;
+}
+.cell-editable:empty::before {
+  content: attr(data-placeholder);
+  color: oklch(0.65 0.012 248);
+  pointer-events: none;
+}
+
+/* Editable focus highlight */
+.editable-focus:focus {
+  background: oklch(0.92 0.04 252 / 0.15);
+  border-radius: 3px;
+  outline: 2px solid oklch(0.47 0.19 252 / 0.6);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px oklch(0.47 0.19 252 / 0.1);
+}
+
+/* Print Styles - robust for full content rendering */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    font-family: "GeneralSans", Arial, sans-serif;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  html {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Hide everything except the invoice */
+  header,
+  nav,
+  aside,
+  .sidebar,
+  .app-header,
+  .action-toolbar {
+    display: none !important;
+  }
+
+  /* Reset layout so invoice fills the page */
+  body > div,
+  .flex.h-screen {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Main content area */
+  main {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    padding: 0 !important;
+  }
+
+  .invoice-page-container {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #invoice-print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .invoice-card {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* No page breaks that cause blank pages */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure color inputs don't appear */
+  input[type="color"],
+  input[type="file"],
+  input[type="date"] {
+    display: none !important;
+  }
+}
+
+/* Animation keyframes */
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
