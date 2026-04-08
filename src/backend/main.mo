@@ -1,55 +1,64 @@
 import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Map "mo:core/Map";
-import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
-import Nat "mo:core/Nat";
 import Order "mo:core/Order";
 import Int "mo:core/Int";
 
-actor {
-  type AnimationProject = {
-    name : Text;
+actor InvoiceDashboard {
+  type InvoiceDocument = {
+    id : Nat;
+    title : Text;
     jsonData : Text;
     created : Time.Time;
   };
 
-  module AnimationProject {
-    public func compareByCreated(proj1 : AnimationProject, proj2 : AnimationProject) : Order.Order {
-      Int.compare(proj1.created, proj2.created);
+  module InvoiceDocument {
+    public func compareByCreated(a : InvoiceDocument, b : InvoiceDocument) : Order.Order {
+      Int.compare(a.created, b.created);
     };
   };
 
-  let projects = Map.empty<Nat, AnimationProject>();
+  let documents = Map.empty<Nat, InvoiceDocument>();
 
   var nextId = 0;
 
-  public shared ({ caller }) func saveProject(name : Text, jsonData : Text) : async Nat {
-    if (name.size() == 0) { Runtime.trap("Project name cannot be empty") };
-    let newProject : AnimationProject = {
-      name;
+  public shared func saveDocument(title : Text, jsonData : Text) : async Nat {
+    if (title.size() == 0) { Runtime.trap("Document title cannot be empty") };
+    let id = nextId;
+    let doc : InvoiceDocument = {
+      id;
+      title;
       jsonData;
       created = Time.now();
     };
-    projects.add(nextId, newProject);
-    let id = nextId;
+    documents.add(id, doc);
     nextId += 1;
     id;
   };
 
-  public query ({ caller }) func getProject(id : Nat) : async AnimationProject {
-    switch (projects.get(id)) {
-      case (null) { Runtime.trap("Project not found") };
-      case (?p) { p };
+  public query func getDocument(id : Nat) : async InvoiceDocument {
+    switch (documents.get(id)) {
+      case (null) { Runtime.trap("Document not found") };
+      case (?doc) { doc };
     };
   };
 
-  public shared ({ caller }) func deleteProject(id : Nat) : async () {
-    if (not projects.containsKey(id)) { Runtime.trap("Project does not exist") };
-    projects.remove(id);
+  public shared func updateDocument(id : Nat, title : Text, jsonData : Text) : async () {
+    switch (documents.get(id)) {
+      case (null) { Runtime.trap("Document not found") };
+      case (?existing) {
+        documents.add(id, { existing with title; jsonData });
+      };
+    };
   };
 
-  public query ({ caller }) func listProjects() : async [AnimationProject] {
-    projects.values().toArray().sort(AnimationProject.compareByCreated);
+  public shared func deleteDocument(id : Nat) : async () {
+    if (not documents.containsKey(id)) { Runtime.trap("Document does not exist") };
+    documents.remove(id);
+  };
+
+  public query func listDocuments() : async [InvoiceDocument] {
+    documents.values().toArray().sort(InvoiceDocument.compareByCreated);
   };
 };

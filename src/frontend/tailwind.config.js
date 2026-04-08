@@ -86,7 +86,7 @@ export default {
         xs: "0 1px 2px 0 rgba(0,0,0,0.06)",
         card: "0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04)",
         invoice: "0 2px 8px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.06)",
-        "btn-primary": "0 2px 8px oklch(0.47 0.19 252 / 0.3)",
+        "btn-primary": "0 2px 8px oklch(0.55 0.24 41 / 0.3)",
       },
       keyframes: {
         "accordion-down": {

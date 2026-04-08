@@ -9,34 +9,38 @@
 import { IDL } from '@icp-sdk/core/candid';
 
 export const Time = IDL.Int;
-export const AnimationProject = IDL.Record({
+export const InvoiceDocument = IDL.Record({
+  'id' : IDL.Nat,
+  'title' : IDL.Text,
   'created' : Time,
   'jsonData' : IDL.Text,
-  'name' : IDL.Text,
 });
 
 export const idlService = IDL.Service({
-  'deleteProject' : IDL.Func([IDL.Nat], [], []),
-  'getProject' : IDL.Func([IDL.Nat], [AnimationProject], ['query']),
-  'listProjects' : IDL.Func([], [IDL.Vec(AnimationProject)], ['query']),
-  'saveProject' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+  'deleteDocument' : IDL.Func([IDL.Nat], [], []),
+  'getDocument' : IDL.Func([IDL.Nat], [InvoiceDocument], ['query']),
+  'listDocuments' : IDL.Func([], [IDL.Vec(InvoiceDocument)], ['query']),
+  'saveDocument' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+  'updateDocument' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
   const Time = IDL.Int;
-  const AnimationProject = IDL.Record({
+  const InvoiceDocument = IDL.Record({
+    'id' : IDL.Nat,
+    'title' : IDL.Text,
     'created' : Time,
     'jsonData' : IDL.Text,
-    'name' : IDL.Text,
   });
   
   return IDL.Service({
-    'deleteProject' : IDL.Func([IDL.Nat], [], []),
-    'getProject' : IDL.Func([IDL.Nat], [AnimationProject], ['query']),
-    'listProjects' : IDL.Func([], [IDL.Vec(AnimationProject)], ['query']),
-    'saveProject' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+    'deleteDocument' : IDL.Func([IDL.Nat], [], []),
+    'getDocument' : IDL.Func([IDL.Nat], [InvoiceDocument], ['query']),
+    'listDocuments' : IDL.Func([], [IDL.Vec(InvoiceDocument)], ['query']),
+    'saveDocument' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+    'updateDocument' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [], []),
   });
 };
 

@@ -1,0 +1,29 @@
+{
+  "overview": "Invoice Dashboard Pro with Kashaya Theme — a full-featured invoice and quotation management app with saffron/orange branding, split SGST/CGST tax structure, editable tables, logo upload, color customization, and PDF/print export.",
+  "features": [
+    "Kashaya saffron/orange theme (#FF6F00)",
+    "Dual SGST + CGST (9% each) auto-calculated taxes",
+    "Editable invoice and quotation tables with dynamic columns",
+    "Logo upload with resize and position controls",
+    "Color picker for header, text, and table colors",
+    "Invoice/Quotation format toggle",
+    "PDF export and print with clean A4 layout",
+    "Dashboard with stats cards",
+    "Saved documents with filter tabs",
+    "LocalStorage persistence with auto-save"
+  ],
+  "category": "productivity",
+  "tags": [
+    "invoice",
+    "quotation",
+    "gst",
+    "sgst",
+    "cgst",
+    "kashaya",
+    "pdf-export",
+    "print",
+    "dashboard",
+    "editable-tables"
+  ],
+  "last_updated": "2026-04-08T09:19:00.134Z"
+}

@@ -10,17 +10,19 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface AnimationProject {
+export interface InvoiceDocument {
+  'id' : bigint,
+  'title' : string,
   'created' : Time,
   'jsonData' : string,
-  'name' : string,
 }
 export type Time = bigint;
 export interface _SERVICE {
-  'deleteProject' : ActorMethod<[bigint], undefined>,
-  'getProject' : ActorMethod<[bigint], AnimationProject>,
-  'listProjects' : ActorMethod<[], Array<AnimationProject>>,
-  'saveProject' : ActorMethod<[string, string], bigint>,
+  'deleteDocument' : ActorMethod<[bigint], undefined>,
+  'getDocument' : ActorMethod<[bigint], InvoiceDocument>,
+  'listDocuments' : ActorMethod<[], Array<InvoiceDocument>>,
+  'saveDocument' : ActorMethod<[string, string], bigint>,
+  'updateDocument' : ActorMethod<[bigint, string, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

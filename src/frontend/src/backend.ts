@@ -89,73 +89,89 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface AnimationProject {
+export interface InvoiceDocument {
+    id: bigint;
+    title: string;
     created: Time;
     jsonData: string;
-    name: string;
 }
 export type Time = bigint;
 export interface backendInterface {
-    deleteProject(id: bigint): Promise<void>;
-    getProject(id: bigint): Promise<AnimationProject>;
-    listProjects(): Promise<Array<AnimationProject>>;
-    saveProject(name: string, jsonData: string): Promise<bigint>;
+    deleteDocument(id: bigint): Promise<void>;
+    getDocument(id: bigint): Promise<InvoiceDocument>;
+    listDocuments(): Promise<Array<InvoiceDocument>>;
+    saveDocument(title: string, jsonData: string): Promise<bigint>;
+    updateDocument(id: bigint, title: string, jsonData: string): Promise<void>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async deleteProject(arg0: bigint): Promise<void> {
+    async deleteDocument(arg0: bigint): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.deleteProject(arg0);
+                const result = await this.actor.deleteDocument(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.deleteProject(arg0);
+            const result = await this.actor.deleteDocument(arg0);
             return result;
         }
     }
-    async getProject(arg0: bigint): Promise<AnimationProject> {
+    async getDocument(arg0: bigint): Promise<InvoiceDocument> {
         if (this.processError) {
             try {
-                const result = await this.actor.getProject(arg0);
+                const result = await this.actor.getDocument(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getProject(arg0);
+            const result = await this.actor.getDocument(arg0);
             return result;
         }
     }
-    async listProjects(): Promise<Array<AnimationProject>> {
+    async listDocuments(): Promise<Array<InvoiceDocument>> {
         if (this.processError) {
             try {
-                const result = await this.actor.listProjects();
+                const result = await this.actor.listDocuments();
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.listProjects();
+            const result = await this.actor.listDocuments();
             return result;
         }
     }
-    async saveProject(arg0: string, arg1: string): Promise<bigint> {
+    async saveDocument(arg0: string, arg1: string): Promise<bigint> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveProject(arg0, arg1);
+                const result = await this.actor.saveDocument(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveProject(arg0, arg1);
+            const result = await this.actor.saveDocument(arg0, arg1);
+            return result;
+        }
+    }
+    async updateDocument(arg0: bigint, arg1: string, arg2: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateDocument(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateDocument(arg0, arg1, arg2);
             return result;
         }
     }

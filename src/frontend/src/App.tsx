@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Toaster } from "@/components/ui/sonner";
 import {
@@ -68,7 +67,6 @@ interface InvoiceData {
   title: string;
   invoiceNumber: string;
   date: string;
-  dueDate: string;
   fromCompany: string;
   fromAddress: string;
   fromEmail: string;
@@ -78,7 +76,8 @@ interface InvoiceData {
   notes: string;
   lineItems: LineItem[];
   subtotal: number;
-  gst: number;
+  sgst: number;
+  cgst: number;
   grandTotal: number;
   headerColor: string;
   textColor: string;
@@ -93,7 +92,6 @@ interface InvoiceData {
     rate: string;
     amount: string;
   };
-  gstRate: number;
   customColumns: CustomColumn[];
 }
 
@@ -131,15 +129,7 @@ function todayStr(): string {
   return new Date().toISOString().split("T")[0];
 }
 
-function dueDateStr(): string {
-  const d = new Date();
-  d.setDate(d.getDate() + 30);
-  return d.toISOString().split("T")[0];
-}
-
 function createEmptyInvoice(): InvoiceData {
-  const savedGstRate = localStorage.getItem("invoiceGstRate");
-  const gstRate = savedGstRate ? Number(savedGstRate) : 18;
   const lineItems = [
     {
       id: generateId(),
@@ -164,13 +154,13 @@ function createEmptyInvoice(): InvoiceData {
     },
   ];
   const subtotal = lineItems.reduce((s, i) => s + i.amount, 0);
-  const gst = Math.round(subtotal * (gstRate / 100) * 100) / 100;
+  const sgst = Math.round(subtotal * 0.09 * 100) / 100;
+  const cgst = Math.round(subtotal * 0.09 * 100) / 100;
   return {
     id: generateId(),
     title: "Invoice",
     invoiceNumber: `INV-${String(Math.floor(Math.random() * 900) + 100)}`,
     date: todayStr(),
-    dueDate: dueDateStr(),
     fromCompany: "Your Company Name",
     fromAddress: "123 Business Street, Mumbai, Maharashtra 400001",
     fromEmail: "billing@yourcompany.com",
@@ -180,11 +170,12 @@ function createEmptyInvoice(): InvoiceData {
     notes: "Payment due within 30 days. Bank transfer preferred.",
     lineItems,
     subtotal,
-    gst,
-    grandTotal: subtotal + gst,
-    headerColor: "#1e3a5f",
+    sgst,
+    cgst,
+    grandTotal: subtotal + sgst + cgst,
+    headerColor: "#FF6F00",
     textColor: "#ffffff",
-    accentColor: "#2d5a8e",
+    accentColor: "#FFA726",
     documentType: "invoice" as const,
     logoDataUrl: "",
     logoWidth: 80,
@@ -195,7 +186,6 @@ function createEmptyInvoice(): InvoiceData {
       rate: "Rate (₹)",
       amount: "Amount (₹)",
     },
-    gstRate,
     customColumns: [],
   };
 }
@@ -205,9 +195,10 @@ function recalcTotals(invoice: InvoiceData): InvoiceData {
     (sum, item) => sum + item.amount,
     0,
   );
-  const gst = Math.round(subtotal * (invoice.gstRate / 100) * 100) / 100;
-  const grandTotal = subtotal + gst;
-  return { ...invoice, subtotal, gst, grandTotal };
+  const sgst = Math.round(subtotal * 0.09 * 100) / 100;
+  const cgst = Math.round(subtotal * 0.09 * 100) / 100;
+  const grandTotal = subtotal + sgst + cgst;
+  return { ...invoice, subtotal, sgst, cgst, grandTotal };
 }
 
 // ─── EditableText ───────────────────────────────────────────────────────────────
@@ -324,7 +315,7 @@ function EditableCell({
             setEditing(false);
           }
         }}
-        className={`w-full bg-blue-50 rounded px-1.5 py-0.5 outline-none ring-2 ring-blue-400 ring-offset-1 border-0 text-sm ${className}`}
+        className={`w-full bg-orange-50 rounded px-1.5 py-0.5 outline-none ring-2 ring-orange-400 ring-offset-1 border-0 text-sm ${className}`}
         data-ocid={ocid}
         placeholder={placeholder}
       />
@@ -335,7 +326,7 @@ function EditableCell({
     <button
       type="button"
       onClick={() => setEditing(true)}
-      className={`cursor-text block w-full text-left text-sm hover:bg-blue-50/60 rounded px-0.5 transition-colors ${className}`}
+      className={`cursor-text block w-full text-left text-sm hover:bg-orange-50/60 rounded px-0.5 transition-colors ${className}`}
       data-ocid={ocid}
     >
       {value || (
@@ -430,12 +421,12 @@ function EditableTh({
 // ─── ColorPickerPanel ───────────────────────────────────────────────────────────
 
 const PRESET_BG_COLORS = [
-  { label: "Navy", hex: "#1e3a5f" },
-  { label: "Teal", hex: "#0f5f5a" },
-  { label: "Purple", hex: "#4a1d96" },
-  { label: "Red", hex: "#7f1d1d" },
-  { label: "Charcoal", hex: "#1f2937" },
-  { label: "Green", hex: "#14532d" },
+  { label: "Kashaya", hex: "#FF6F00" },
+  { label: "Amber", hex: "#FFA726" },
+  { label: "Deep Orange", hex: "#E65100" },
+  { label: "Burnt", hex: "#BF360C" },
+  { label: "Warm Amber", hex: "#FF8F00" },
+  { label: "Gold", hex: "#FFD54F" },
 ];
 
 const PRESET_TEXT_COLORS = [
@@ -690,7 +681,7 @@ function LineItemRow({
 
   return (
     <tr
-      className="group border-b border-border hover:bg-[oklch(0.97_0.004_252)] transition-colors"
+      className="group border-b border-border hover:bg-orange-50/40 transition-colors"
       data-ocid={`lineitems.item.${index + 1}`}
     >
       <td className="py-3 px-4 text-center text-muted-foreground text-sm font-mono">
@@ -1038,7 +1029,7 @@ function InvoiceEditor({
         <div className="flex items-center gap-2 flex-wrap">
           {/* Document type segmented control */}
           <div
-            className="flex rounded-lg border border-slate-200 overflow-hidden mr-1"
+            className="flex rounded-lg border border-border overflow-hidden mr-1"
             data-ocid="invoice.doc_type_toggle"
           >
             <button
@@ -1058,7 +1049,7 @@ function InvoiceEditor({
                       : invoice.invoiceNumber,
                 })
               }
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${invoice.documentType === "invoice" ? "bg-slate-800 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${invoice.documentType === "invoice" ? "bg-primary text-white" : "bg-card text-muted-foreground hover:bg-muted"}`}
               data-ocid="invoice.type_invoice_tab"
             >
               Invoice
@@ -1080,7 +1071,7 @@ function InvoiceEditor({
                       : invoice.invoiceNumber,
                 })
               }
-              className={`px-3 py-1.5 text-xs font-medium transition-colors ${invoice.documentType === "quotation" ? "bg-slate-800 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${invoice.documentType === "quotation" ? "bg-primary text-white" : "bg-card text-muted-foreground hover:bg-muted"}`}
               data-ocid="invoice.type_quotation_tab"
             >
               Quotation
@@ -1264,24 +1255,6 @@ function InvoiceEditor({
                     className="text-sm font-mono bg-white/10 border-0 rounded px-2 py-1 outline-none focus:bg-white/20 transition-colors"
                     style={{ color: invoice.textColor, colorScheme: "dark" }}
                     data-ocid="invoice.date_input"
-                  />
-                </div>
-                <div className="flex items-center gap-3 justify-end">
-                  <span
-                    className="text-xs font-medium opacity-70"
-                    style={{ color: invoice.textColor }}
-                  >
-                    {invoice.documentType === "quotation"
-                      ? "Valid Until:"
-                      : "Due Date:"}
-                  </span>
-                  <input
-                    type="date"
-                    value={invoice.dueDate}
-                    onChange={(e) => updateField("dueDate", e.target.value)}
-                    className="text-sm font-mono bg-white/10 border-0 rounded px-2 py-1 outline-none focus:bg-white/20 transition-colors"
-                    style={{ color: invoice.textColor, colorScheme: "dark" }}
-                    data-ocid="invoice.duedate_input"
                   />
                 </div>
               </div>
@@ -1496,27 +1469,48 @@ function InvoiceEditor({
 
         {/* Totals */}
         <div className="flex flex-col items-end border-t border-border px-8 py-6">
-          <div className="w-full sm:w-72 space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-mono font-medium">
+          <div className="w-full sm:w-80 space-y-0 rounded-xl overflow-hidden border border-border">
+            <div className="flex justify-between text-sm px-4 py-3 bg-card">
+              <span className="text-muted-foreground font-medium">
+                Subtotal
+              </span>
+              <span className="font-mono font-semibold text-foreground">
                 {formatCurrency(invoice.subtotal)}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">
-                GST ({invoice.gstRate}%)
+            <div
+              className="flex justify-between text-sm px-4 py-3"
+              style={{ background: "#FFE0B2" }}
+            >
+              <span className="font-medium" style={{ color: "#7A3800" }}>
+                SGST (9%)
               </span>
-              <span className="font-mono font-medium">
-                {formatCurrency(invoice.gst)}
+              <span
+                className="font-mono font-semibold"
+                style={{ color: "#7A3800" }}
+              >
+                {formatCurrency(invoice.sgst)}
               </span>
             </div>
-            <Separator />
             <div
-              className="flex justify-between py-3 px-4 rounded-lg"
+              className="flex justify-between text-sm px-4 py-3"
+              style={{ background: "#FFD090" }}
+            >
+              <span className="font-medium" style={{ color: "#7A3800" }}>
+                CGST (9%)
+              </span>
+              <span
+                className="font-mono font-semibold"
+                style={{ color: "#7A3800" }}
+              >
+                {formatCurrency(invoice.cgst)}
+              </span>
+            </div>
+            <div
+              className="flex justify-between px-4 py-4"
               style={{
-                background: invoice.headerColor,
-                color: invoice.textColor,
+                background: "#FF6F00",
+                color: "#ffffff",
               }}
             >
               <span className="font-bold text-base">Grand Total</span>
@@ -1545,7 +1539,7 @@ function InvoiceEditor({
         {/* Footer */}
         <div
           className="px-8 py-4 text-center text-xs"
-          style={{ background: "oklch(0.97 0.003 248)" }}
+          style={{ background: "#FFF3E0" }}
         >
           <span className="text-muted-foreground">
             Generated on {formatDate(todayStr())} · Thank you for your business!
@@ -1595,24 +1589,24 @@ function Dashboard({
       value: String(savedInvoices.length),
       subline: `${totalInvoices} invoice${totalInvoices !== 1 ? "s" : ""}, ${totalQuotations} quotation${totalQuotations !== 1 ? "s" : ""}`,
       icon: ClipboardList,
-      color: "text-blue-600",
-      bg: "bg-blue-50",
+      color: "text-primary",
+      bg: "bg-primary/10",
     },
     {
       label: "Total Revenue",
       value: formatCurrency(totalRevenue),
       subline: null as string | null,
       icon: TrendingUp,
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
+      color: "text-primary",
+      bg: "bg-secondary/20",
     },
     {
       label: "Pending Amount",
       value: formatCurrency(pendingAmount),
       subline: null as string | null,
       icon: BarChart3,
-      color: "text-amber-600",
-      bg: "bg-amber-50",
+      color: "text-primary",
+      bg: "bg-muted",
     },
   ];
 
@@ -1724,8 +1718,8 @@ function Dashboard({
                 data-ocid={`dashboard.invoice.item.${i + 1}`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-                    <FileText size={14} className="text-blue-600" />
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <FileText size={14} className="text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">
@@ -1905,8 +1899,8 @@ function SavedInvoicesPanel({
                         <span
                           className={`text-xs px-1.5 py-0.5 rounded font-medium ${
                             isQuotation
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-blue-50 text-blue-700"
+                              ? "bg-secondary/20 text-foreground"
+                              : "bg-primary/10 text-primary"
                           }`}
                         >
                           {isQuotation ? "QUO" : "INV"}
@@ -1916,9 +1910,7 @@ function SavedInvoicesPanel({
                         {inv.invoiceNumber} · {inv.toCompany}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Date: {formatDate(inv.date)} ·{" "}
-                        {isQuotation ? "Valid Until:" : "Due:"}{" "}
-                        {formatDate(inv.dueDate)}
+                        Date: {formatDate(inv.date)}
                       </p>
                     </div>
                   </div>
@@ -1965,17 +1957,6 @@ function SavedInvoicesPanel({
 // ─── Settings Panel ─────────────────────────────────────────────────────────────
 
 function SettingsPanel() {
-  const [gstRate, setGstRate] = useState<number>(() => {
-    const saved = localStorage.getItem("invoiceGstRate");
-    return saved ? Number(saved) : 18;
-  });
-
-  const handleGstChange = (value: number) => {
-    const clamped = Math.min(30, Math.max(1, value));
-    setGstRate(clamped);
-    localStorage.setItem("invoiceGstRate", String(clamped));
-  };
-
   const handleClearData = () => {
     if (window.confirm("Clear all saved invoices? This cannot be undone.")) {
       localStorage.removeItem("invoiceDraft");
@@ -1991,27 +1972,28 @@ function SettingsPanel() {
       </h2>
 
       <div className="bg-card border border-border rounded-xl shadow-card divide-y divide-border">
-        {/* GST Rate */}
+        {/* Tax Info */}
         <div className="px-6 py-5">
           <h3 className="font-semibold text-sm text-foreground mb-1">
-            Default GST Rate
+            GST Structure
           </h3>
-          <p className="text-xs text-muted-foreground mb-4">
-            Set the default GST rate for new invoices. Existing invoices keep
-            their own rate.
+          <p className="text-xs text-muted-foreground mb-3">
+            All invoices use dual GST: SGST (9%) + CGST (9%), auto-calculated
+            from subtotal. Total effective GST is 18%.
           </p>
-          <div className="flex items-center gap-3">
-            <Input
-              type="number"
-              min={1}
-              max={30}
-              value={gstRate}
-              onChange={(e) => handleGstChange(Number(e.target.value))}
-              className="w-24 text-sm"
-              data-ocid="settings.gst_rate_input"
-            />
-            <span className="text-sm text-muted-foreground">%</span>
-            <span className="text-xs text-muted-foreground">(1–30)</span>
+          <div className="flex gap-3">
+            <div
+              className="px-3 py-2 rounded-lg text-xs font-semibold"
+              style={{ background: "#FFE0B2", color: "#7A3800" }}
+            >
+              SGST: 9% (fixed)
+            </div>
+            <div
+              className="px-3 py-2 rounded-lg text-xs font-semibold"
+              style={{ background: "#FFD090", color: "#7A3800" }}
+            >
+              CGST: 9% (fixed)
+            </div>
           </div>
         </div>
 
@@ -2077,7 +2059,7 @@ function AppSidebar({
       className={`flex flex-col h-full transition-all duration-300 ${
         collapsed ? "w-14" : "w-56"
       }`}
-      style={{ background: "oklch(0.13 0.018 248)" }}
+      style={{ background: "oklch(0.22 0.06 41)" }}
     >
       {/* Logo / Brand */}
       <div
@@ -2161,9 +2143,9 @@ function AppSidebar({
 // ─── backfillInvoice ────────────────────────────────────────────────────────────
 
 const DEFAULT_INVOICE_FIELDS = {
-  headerColor: "#1e3a5f",
+  headerColor: "#FF6F00",
   textColor: "#ffffff",
-  accentColor: "#2d5a8e",
+  accentColor: "#FFA726",
   documentType: "invoice" as const,
   logoDataUrl: "",
   logoWidth: 80,
@@ -2174,14 +2156,28 @@ const DEFAULT_INVOICE_FIELDS = {
     rate: "Rate (₹)",
     amount: "Amount (₹)",
   },
-  gstRate: 18,
+  sgst: 0,
+  cgst: 0,
   customColumns: [] as CustomColumn[],
 };
 
 function backfillInvoice(inv: Record<string, unknown>): InvoiceData {
+  // Migrate old gst/gstRate to sgst/cgst if needed
+  const partial = inv as Partial<InvoiceData> & {
+    gst?: number;
+    gstRate?: number;
+    dueDate?: string;
+  };
+  const subtotal = (partial.subtotal as number) ?? 0;
+  const sgst = partial.sgst ?? Math.round(subtotal * 0.09 * 100) / 100;
+  const cgst = partial.cgst ?? Math.round(subtotal * 0.09 * 100) / 100;
+  const grandTotal = subtotal + sgst + cgst;
   return {
     ...DEFAULT_INVOICE_FIELDS,
-    ...(inv as Partial<InvoiceData>),
+    ...partial,
+    sgst,
+    cgst,
+    grandTotal,
   } as InvoiceData;
 }
 

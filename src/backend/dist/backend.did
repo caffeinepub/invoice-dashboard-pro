@@ -1,0 +1,15 @@
+type Time = int;
+type InvoiceDocument = 
+ record {
+   created: Time;
+   id: nat;
+   jsonData: text;
+   title: text;
+ };
+service : {
+  deleteDocument: (id: nat) -> ();
+  getDocument: (id: nat) -> (InvoiceDocument) query;
+  listDocuments: () -> (vec InvoiceDocument) query;
+  saveDocument: (title: text, jsonData: text) -> (nat);
+  updateDocument: (id: nat, title: text, jsonData: text) -> ();
+}

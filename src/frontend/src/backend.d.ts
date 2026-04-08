@@ -7,15 +7,17 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface AnimationProject {
+export interface InvoiceDocument {
+    id: bigint;
+    title: string;
     created: Time;
     jsonData: string;
-    name: string;
 }
 export type Time = bigint;
 export interface backendInterface {
-    deleteProject(id: bigint): Promise<void>;
-    getProject(id: bigint): Promise<AnimationProject>;
-    listProjects(): Promise<Array<AnimationProject>>;
-    saveProject(name: string, jsonData: string): Promise<bigint>;
+    deleteDocument(id: bigint): Promise<void>;
+    getDocument(id: bigint): Promise<InvoiceDocument>;
+    listDocuments(): Promise<Array<InvoiceDocument>>;
+    saveDocument(title: string, jsonData: string): Promise<bigint>;
+    updateDocument(id: bigint, title: string, jsonData: string): Promise<void>;
 }

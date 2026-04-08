@@ -19,50 +19,49 @@
 @layer base {
   :root {
     --radius: 0.5rem;
-    /* Invoice Pro Light Theme */
+    /* Kashaya Saffron/Orange Theme - Light Mode */
     --background: 0.975 0.003 248;
     --foreground: 0.17 0.016 248;
     --card: 1 0 0;
     --card-foreground: 0.17 0.016 248;
     --popover: 1 0 0;
     --popover-foreground: 0.17 0.016 248;
-    --primary: 0.47 0.19 252;
+    --primary: 0.55 0.24 41;
     --primary-foreground: 0.99 0 0;
-    --secondary: 0.94 0.008 248;
+    --secondary: 0.68 0.16 41;
     --secondary-foreground: 0.17 0.016 248;
-    --muted: 0.94 0.008 248;
+    --muted: 0.88 0.09 41;
     --muted-foreground: 0.52 0.016 248;
-    --accent: 0.94 0.01 248;
+    --accent: 0.88 0.09 41;
     --accent-foreground: 0.17 0.016 248;
     --destructive: 0.577 0.245 27.325;
     --destructive-foreground: 0.985 0 0;
-    --border: 0.88 0.012 248;
-    --input: 0.88 0.012 248;
-    --ring: 0.47 0.19 252;
-    --chart-1: 0.47 0.19 252;
-    --chart-2: 0.6 0.15 178;
+    --border: 0.88 0.09 41;
+    --input: 0.88 0.09 41;
+    --ring: 0.55 0.24 41;
+    --chart-1: 0.55 0.24 41;
+    --chart-2: 0.68 0.16 41;
     --chart-3: 0.55 0.22 32;
     --chart-4: 0.65 0.18 142;
     --chart-5: 0.55 0.25 302;
-    --sidebar: 0.13 0.018 248;
+    --sidebar: 0.55 0.24 41;
     --sidebar-foreground: 0.93 0.01 248;
-    --sidebar-primary: 0.47 0.19 252;
+    --sidebar-primary: 0.55 0.24 41;
     --sidebar-primary-foreground: 0.99 0 0;
-    --sidebar-accent: 0.19 0.018 248;
-    --sidebar-accent-foreground: 0.93 0.01 248;
-    --sidebar-border: 0.22 0.016 248;
-    --sidebar-ring: 0.47 0.19 252;
+    --sidebar-accent: 0.68 0.16 41;
+    --sidebar-accent-foreground: 0.17 0.016 248;
+    --sidebar-border: 0.68 0.16 41;
+    --sidebar-ring: 0.55 0.24 41;
 
-    /* Custom tokens */
-    --navy: oklch(0.13 0.018 248);
-    --navy-mid: oklch(0.19 0.018 248);
-    --navy-light: oklch(0.24 0.016 248);
-    --blue-accent: oklch(0.47 0.19 252);
-    --blue-light: oklch(0.92 0.04 252);
+    /* Kashaya Custom Tokens */
+    --kashaya-primary: oklch(0.55 0.24 41);
+    --kashaya-secondary: oklch(0.68 0.16 41);
+    --kashaya-light: oklch(0.88 0.09 41);
+    --kashaya-dark: oklch(0.35 0.18 41);
     --success: oklch(0.55 0.18 145);
     --warning: oklch(0.72 0.18 68);
     --table-stripe: oklch(0.975 0.003 248);
-    --table-header: oklch(0.13 0.018 248);
+    --table-header: oklch(0.88 0.09 41);
   }
 
   * {
@@ -87,11 +86,11 @@
     background: oklch(0.94 0.008 248);
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.78 0.016 248);
+    background: oklch(0.68 0.16 41);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.62 0.018 248);
+    background: oklch(0.55 0.24 41);
   }
 }
 
@@ -106,13 +105,13 @@
   pointer-events: none;
 }
 
-/* Editable focus highlight */
+/* Editable focus highlight - Kashaya orange ring */
 .editable-focus:focus {
-  background: oklch(0.92 0.04 252 / 0.15);
+  background: oklch(0.88 0.09 41 / 0.15);
   border-radius: 3px;
-  outline: 2px solid oklch(0.47 0.19 252 / 0.6);
+  outline: 2px solid oklch(0.55 0.24 41 / 0.6);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px oklch(0.47 0.19 252 / 0.1);
+  box-shadow: 0 0 0 4px oklch(0.55 0.24 41 / 0.1);
 }
 
 /* Print Styles - robust for full content rendering */
